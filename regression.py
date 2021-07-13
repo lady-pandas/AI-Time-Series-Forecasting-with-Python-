@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import math
 
-!pip install sklearn-ts==0.0.4
+!pip install sklearn-ts==0.0.5
 
 """# Load data"""
 
@@ -145,7 +145,8 @@ results['best_params']
 #https://xgboost.readthedocs.io/en/latest/python/python_api.html#module-xgboost.sklearn
 from xgboost import XGBRegressor
 
-params = {'n_estimators': [100], 'max_depth': [8, 15, 20],'objective': ['reg:squarederror'], 'subsample': [1.0]}
+params = {'n_estimators': [100, 300], 'max_depth': [8, 15, 20],'objective': ['reg:squarederror'], 'subsample': [1.0, 0.8, 0.7], 
+          'learning_rate': [0.01, 0.05, 0.1, 0.5, 1]}
 regressor = XGBRegressor()
 
 results = check_model(regressor, params, dataset, features=features, categorical_features=categorical_features)
@@ -191,5 +192,5 @@ results_array = []
 for regressor, params in models.items():
   results_array.append(check_model(regressor, params, dataset, plotting=False, features=features, categorical_features=categorical_features))
 
-pd.DataFrame(results_array).sort_values('mae_cv')
+pd.DataFrame({'Model': [res['model_name'] for res in  results_array], 'MAPE': [res['performance_test']['MAPE'] for res in  results_array]}).sort_values('MAPE')
 

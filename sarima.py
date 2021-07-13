@@ -7,8 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1cR-ed1KpEFPLpwtuNtFzq98fJTTjlxag
 """
 
-
-
 import pandas as pd
 
 """# Introduction
@@ -107,11 +105,11 @@ plt.savefig('acf.png')
 
 """## AutoRegressive"""
 
-!pip install --upgrade statsmodels
+#!pip install --upgrade statsmodels
 
 from statsmodels.tsa.arima_process import arma_generate_sample
 
-df['AR(1)'] = arma_generate_sample(ar=[1, 0.9], ma=[1], nsample=n, scale=sigma)
+df['AR(1)'] = arma_generate_sample(ar=[1, 0.9], ma=[1], nsample=n) #, scale=sigma)
 
 df['AR(1)'].plot(title='AR(1)')
 
@@ -218,45 +216,18 @@ dist_vec = [np.random.standard_normal, np.random.exponential, np.random.poisson,
 n_vec = [24, 48, 72, 100, 200, 300, 500, 1000]
 mc_vec = range(100)
 
-# TODO check stationarity - wrongly assumed they are not statinary
-# guessing parameter on pacf
-res_array = []
-for dist in dist_vec:
-    print(dist)
-    for n in n_vec:
-        for mc in mc_vec:
-            res_one = estimate_params(mc=mc, dist=dist, n=n)
-            res_one['mc'] = mc
-            res_array.append(res_one)
+# # TODO check stationarity - wrongly assumed they are not statinary
+# # guessing parameter on pacf
+# res_array = []
+# for dist in dist_vec:
+#     print(dist)
+#     for n in n_vec:
+#         for mc in mc_vec:
+#             res_one = estimate_params(mc=mc, dist=dist, n=n)
+#             res_one['mc'] = mc
+#             res_array.append(res_one)
 
-res = pd.concat(res_array)
-
-# spr lasya
-res.to_csv('sim_results.csv')
-
-res['error'] = res['est_params'] - res['params']
-res['abs_error'] = res['error'].abs()
-
-res['stationary_ct'].value_counts()
-
-res['stationary_ct_kpss'].value_counts()
-
-res['stationary_c'].value_counts()
-
-res[~res['stationary_ct']]['dist'].value_counts()
-
-res['est_p'].value_counts()
-
-res[res['est_p']!=4]['dist'].value_counts()
-
-res.head()
-
-data_agg = res[['dist', 'n', 'abs_error']].groupby(['dist', 'n']).mean().reset_index()
-
-# TODO reset multiindex
-
-results = pd.pivot_table(data=data_agg, values='abs_error', index='n', columns='dist')
-results.plot()
+# res = pd.concat(res_array)
 
 """## AutoRegressive Moving Average"""
 
@@ -471,14 +442,14 @@ class SARIMARegressor(BaseEstimator, RegressorMixin):
 sr = SARIMARegressor()
 sr.fit(dataset[target], dataset[target])
 
-#!pip install sklearn-ts==0.0.4
+!pip install sklearn-ts==0.0.5
 
 from sklearn_ts.validator import check_model
 
 import warnings
 warnings.filterwarnings('ignore')
 
-params = {'seasonal_order': [(0, 1, 0, 7)]}
+params = {'order': [(4, 1, 4)], 'seasonal_order': [(0, 1, 1, 7)]}
 regressor = SARIMARegressor()
 
 dataset.index = dataset['date']
@@ -488,6 +459,7 @@ results['best_params']
 
 """## Sktime"""
 
+!pip install sktime==0.6.1
 from sktime.forecasting.arima import AutoARIMA
 
 forecaster = AutoARIMA(suppress_warnings=True,sp=12)
@@ -508,3 +480,9 @@ df['SARIMA (0,1,1) (0,1,0)12'].plot(ax=ax)
 
 y_pred['mean'].plot(ax=ax, style='k--')
 ax.fill_between(y_pred.index, y_pred['lower'], y_pred['upper'], color='k', alpha=0.1)
+
+forecaster = AutoARIMA(suppress_warnings=True,sp=12)
+dataset.index = pd.to_datetime(dataset['date'])
+forecaster.fit(dataset['new_cases'])
+
+forecaster.get_fitted_params()

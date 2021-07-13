@@ -88,7 +88,7 @@ results = check_model(
 
 from sklearn_ts.features.explainer import plot_features
 
-plot_features(results['model'], results['features'], figsize=(10, 5));
+plot_features(results['model'], results['features']);
 
 """# Hierarchical"""
 

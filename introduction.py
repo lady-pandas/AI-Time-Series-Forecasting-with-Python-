@@ -39,6 +39,13 @@ def pretty_plot(chart, save=False):
 
 pretty_plot(covid_daily, save=True)
 
+"""## Airline"""
+
+!pip install sktime
+from sktime.datasets import load_airline
+
+load_airline().plot()
+
 """## (Gaussian) white noise"""
 
 white_noise_data = pd.DataFrame({'Z': np.random.normal(loc=0.0, scale=10.0, size=500)})

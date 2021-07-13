@@ -10,7 +10,7 @@ Original file is located at
 import pandas as pd
 import numpy as np
 
-!pip install sklearn-ts==0.0.3
+!pip install sklearn-ts==0.0.5
 
 """# Load data"""
 

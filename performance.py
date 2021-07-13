@@ -12,7 +12,7 @@ import math
 import pandas as pd
 import numpy as np
 
-!pip install sktime
+!pip install sktime==0.6.1
 from sktime.datasets import load_airline
 from sktime.utils.plotting import plot_series
 from sktime.forecasting.model_selection import temporal_train_test_split
@@ -21,6 +21,11 @@ from sktime.forecasting.exp_smoothing import ExponentialSmoothing
 from sktime.forecasting.naive import NaiveForecaster
 
 from sktime.performance_metrics.forecasting import mean_absolute_percentage_error, mean_absolute_error, mean_squared_error, mean_asymmetric_error
+
+"""# Load data
+
+## Airline
+"""
 
 y = load_airline()
 y_train, y_test = temporal_train_test_split(y, test_size=36)
@@ -61,6 +66,8 @@ errors = pd.DataFrame([metrics_naive, metrics_naive_seasonal], index=['naive', '
 print(errors.to_latex())
 
 pd.Series(abs(y_pred - y_test)).hist()
+
+"""## Covid"""
 
 covid = pd.read_csv("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv")
 #covid.head(2)#
@@ -107,15 +114,15 @@ class NaiveRegressor(BaseEstimator, RegressorMixin):
         # TODO not valid for fitting to train
         return self.model.predict(np.arange(X.shape[0]) + 1)
 
-    def get_params(self, deep=True):
-        return {'strategy': self.strategy, 'sp': self.sp}
+    # def get_params(self, deep=True):
+    #     return {'strategy': self.strategy, 'sp': self.sp}
 
-    def set_params(self, **parameters):
-        for parameter, value in parameters.items():
-            setattr(self, parameter, value)
-        return self
+    # def set_params(self, **parameters):
+    #     for parameter, value in parameters.items():
+    #         setattr(self, parameter, value)
+    #     return self
 
-#!pip install sklearn-ts==0.0.2
+!pip install sklearn-ts==0.0.5
 
 from sklearn_ts.validator import check_model
 
@@ -131,5 +138,7 @@ results = check_model(
     plotting=True
 )
 
-results
+results['best_params']
+
+results.keys()
 

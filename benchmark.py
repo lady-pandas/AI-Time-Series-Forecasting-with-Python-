@@ -44,7 +44,7 @@ y.plot()
 """
 
 #https://www.sktime.org/en/latest/api_reference/modules/auto_generated/sktime.forecasting.naive.NaiveForecaster.html
-!pip install sktime
+!pip install sktime==0.6.1
 from sktime.forecasting.naive import NaiveForecaster
 #https://www.sktime.org/en/latest/api_reference/modules/auto_generated/sktime.forecasting.base.ForecastingHorizon.html
 from sktime.forecasting.base import ForecastingHorizon
@@ -79,13 +79,13 @@ class ExpertRegressor(BaseEstimator, RegressorMixin):
     def predict(self, X):
         return min(self.expert_value, self.mean)
 
-    def get_params(self, deep=True):
-        return {'expert_value': self.expert_value}
+    # def get_params(self, deep=True):
+    #     return {'expert_value': self.expert_value}
 
-    def set_params(self, **parameters):
-        for parameter, value in parameters.items():
-            setattr(self, parameter, value)
-        return self
+    # def set_params(self, **parameters):
+    #     for parameter, value in parameters.items():
+    #         setattr(self, parameter, value)
+    #     return self
 
 er = ExpertRegressor()
 er.fit(y[['new_cases']], y['new_cases'])
